@@ -1,15 +1,20 @@
 package main
 
-import (
-	"fmt"
-	"goFirstProgram/helper"
-	"strconv"
-)
+import "fmt"
+
 
 const conferenceTickets int = 20
 var remainingTickets uint = 20
 var conferenceName = "GO Conference"
-var bookings = make([]map[string]string, 0)
+var bookings = make([]UserData, 0)
+
+type UserData struct {
+	firstName string
+	lastName string
+	email string
+	tickets uint
+}
+
 
 func main() {
 
@@ -18,7 +23,7 @@ func main() {
 	for {
 		firstName, lastName, email, userTickets := getUserInput()
 
-		isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 			bookTicket(userTickets, firstName, lastName, email)
@@ -54,7 +59,7 @@ func greetUsers() {
 func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings {
-	firstNames = append(firstNames, booking["firstName"])
+	firstNames = append(firstNames, booking.firstName)
 		}	
 	return firstNames
 }
@@ -83,11 +88,13 @@ func getUserInput () (string, string, string, uint) {
 func bookTicket (userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
 
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["tickets"] = strconv.FormatUint(uint64(userTickets), 10)
+	var userData = UserData {
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
+		tickets: userTickets,
+	}
+
 
 	bookings = append(bookings, userData)
 	fmt.Printf("List of bookings is %v\n", bookings)
